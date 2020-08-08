@@ -1,22 +1,8 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const console_table = require('console.table');
+const connection = require('./connection.js');
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    // port local is 3306
-    port: 3306,
-
-    user: 'root',
-
-    password: 'iC4]mY5*pZ4<uD7&rP8(',
-    database: 'employees'
-});
-
-connection.connect(function (err) {
-    if (err) throw err;
-    startEmpCMS();
-});
 
 function startEmpCMS() {
     inquirer
@@ -29,7 +15,7 @@ function startEmpCMS() {
                 'View, add, and remove Roles?',
                 'View, add, and remove, Departments?',
                 'View Departments Labor Budgets',
-
+                'exit'
             ]
         }).then(function (answer) {
             switch (answer.action) {
@@ -39,59 +25,19 @@ function startEmpCMS() {
                 case 'View, add, and remove Roles?':
                     getRole();
                     break;
-
                 case 'View, add, and remove, Departments?':
                     getDept();
                     break;
                 case 'View Departments Labor Budgets':
-                    getBudget();
+                    viewBudget();
+                    break;
+                case 'exit':
+                    quit();
                     break;
             }
         });
 }
 
-function getEmpData() {
-    inquirer
-        .prompt({
-            name: "empData",
-            type: "rawlist",
-            message: "What would you like to do?",
-            choices: [
-                'View All Employees?',
-                'Add an Employee?',
-                'View all Employess by Department?',
-                'View all Employees by Manager?',
-                'Update an Employee?',
-                'Remove an Employee?',
-
-            ]
-        }).then(function (answer) {
-            switch (answer.empData) {
-                case "View all Employees?":
-                    viewEmps();
-                    break;
-
-                case "Add an Employee?":
-                    addEmp();
-                    break;
-
-                case "View all Employess by Department?":
-                    EmpByDept();
-                    break;
-
-                case "View all Employees by Manager?":
-                    EmpByMngr();
-                    break;
-                case "Update Employee?":
-                    updateEmp();
-                    break;
-
-                case "Remove an Employee?":
-                    deleteEmp();
-                    break;
-            }
-        });
-}
 
 function getRole() {
     inquirer
@@ -144,9 +90,31 @@ function getDept() {
                     break;
                 case "Remove a Department?":
                     deleteDept();
-                case "View Department's Labor Budget":
-                    viewBudget();
                     break;
             }
         })
 }
+function viewBudget() {
+    inquirer
+        .prompt({
+            type: "confirm",
+            name: "deptBudget",
+            message: "Would you like to compare Department Budgets?",
+            default: true
+        }).then(function (answer) {
+            console.log('what is it y or n', answer);
+            if ({ deptBudget: true }) {
+                let query = "SELECT department.name, SUM(role.salary) FROM role INNER JOIN department ON department.id = role.department_id GROUP BY ?";
+                connection.query(query, function (err, res) {
+                    if (err) throw err;
+
+                    console.table(res);
+                });
+            }
+            startEmpCMS();
+        })
+}
+function quit() {
+    connection.end();
+}
+
