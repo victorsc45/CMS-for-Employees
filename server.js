@@ -36,11 +36,15 @@ function CMS() {
                     viewEmps();
                     break;
                 case 'View Employees by Manager?':
-                    employeesJSON();
+                    //call json employees array
+                    empJsonArr();
+                    //async await function view employee by manager
                     setTimeout(viewEmpWMngr, 500);
                     break;
                 case 'View Employees by Role?':
-                    rolesJSON();
+                    //call json roles array   
+                    roleJsonArr();
+                    //async await function view employee by role
                     setTimeout(viewEmpWRole, 500);
                     break;
                 case 'View Departments?':
@@ -50,24 +54,30 @@ function CMS() {
                     viewRoles();
                     break;
                 case 'Add Employee?':
-                    rolesJSON();
-                    employeesJSON();
+                    //call json arrays roles and employees to add new employee
+                    roleJsonArr();
+                    empJsonArr();
                     addEmp();
                     break;
                 case 'Add Departments?':
+                    //add new department
                     addDept();
                     break;
                 case 'Add Role?':
                     addRole();
-                    departmentsJSON();
+                    //json array for all departments to add new role
+                    deptJsonArr();
                     break;
                 case 'Update Employee Information?':
-                    employeesJSON();
-                    rolesJSON();
+                    //call json arrays roles and employees to update  employee async await function
+                    empJsonArr();
+                    roleJsonArr();
                     setTimeout(updateEmp, 500);
                     break;
                 case 'Remove Employee?':
-                    employeesJSON();
+                    //call json employees array 
+                    empJsonArr();
+                    //function async await to offboard employee
                     setTimeout(deleteEmp, 500);
                     break;
                 case 'View Budget?':
@@ -96,7 +106,7 @@ LEFT JOIN department d ON r.department_id = d.id;`;
         CMS();
     });
 }
-// Function to view all Employees working under a Manager
+// view all Employees working under a Manager
 function viewEmpWMngr() {
     inquirer.prompt({
         name: "managerName",
@@ -147,7 +157,7 @@ function viewEmpWRole() {
             });
         })
 }
-// Function to view departments and id
+//  view departments and id
 function viewDepts() {
     let query = `SELECT id as ID, name as "DEPARTMENT NAME" FROM department;`;
     connection.query(query, (err, res) => {
@@ -156,7 +166,7 @@ function viewDepts() {
         CMS();
     });
 }
-// Function view all the roles and Ids
+//  view all the roles and Ids
 function viewRoles() {
     let query = "SELECT id AS ID, title as ROLE, salary as SALARY FROM role;";
     connection.query(query, (err, res) => {
@@ -212,7 +222,7 @@ async function addEmp() {
             let roleId = getRoleID(answers.role, rolesArray);
             let mngrId = getManagerID(answers.manager, employeesArray);
 
-            // Function insert into DB name role and manager of employee
+            // insert into DB name role and manager of employee
             function addNewEmp(answers, roleId, mngrId) {
                 let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES('${answers.first_name}','${answers.last_name}',${roleId},${mngrId});`
                 connection.query(query, (err, res) => {
@@ -299,7 +309,7 @@ async function addRole() {
             });
         });
 }
-// Function to UPDATE a specific EMPLOYEE
+// Update employee from list in view
 async function updateEmp() {
     inquirer
         .prompt([{
@@ -311,15 +321,15 @@ async function updateEmp() {
         ])
 
         .then(function (answers) {
-            // Split name choosen to match with values in database 
+            // split name to view as elgible to user
             let splitName = answers.empFullName.split(" ");
 
-            // IF choosen NONE ... do nothing 
+            // choose none to return to main prompt
             if (answers.empFullName === "NONE") {
                 CMS();
             }
 
-            // ELSE prompt the options WHAT to update for the employee
+            // select the update want for the employee
             else {
 
                 inquirer.prompt([
@@ -457,9 +467,9 @@ async function viewBudget() {
 }
 
 // json array of roles
-async function rolesJSON() {
+async function roleJsonArr() {
     connection.query("SELECT id, title FROM role;", (err, res) => {
-        res.forEach(function (row) {
+        res.forEach((row) => {
             rolesArray.push({ id: row.id, title: row.title });
             employeeRolesNames.push(row.title);
         })
@@ -468,11 +478,11 @@ async function rolesJSON() {
 }
 
 // json array of employees
-async function employeesJSON() {
+async function empJsonArr() {
     employeeFullName.push("NONE");
 
     connection.query("SELECT id, first_name, last_name FROM employee;", (err, res) => {
-        res.forEach(function (row) {
+        res.forEach((row) => {
             employeesArray.push({ id: row.id, first_name: row.first_name, last_name: row.last_name });
             employeeFullName.push(row.first_name + " " + row.last_name);
         })
@@ -481,9 +491,9 @@ async function employeesJSON() {
 }
 
 // json array of departments
-async function departmentsJSON() {
+async function deptJsonArr() {
     connection.query("SELECT id, name FROM department;", (err, res) => {
-        res.forEach(function (row) {
+        res.forEach((row) => {
             roleDepartment.push(row.name);
             departmentsArray.push({ id: row.id, name: row.name });
         })

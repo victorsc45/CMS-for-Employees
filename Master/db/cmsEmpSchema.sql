@@ -27,3 +27,4 @@ CREATE TABLE employee (
     FOREIGN KEY (manager_id) REFERENCES role(id),
     PRIMARY KEY (id)
 );
+-- cms schema
