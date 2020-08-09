@@ -1,42 +1,50 @@
-# Unit 12 MySQL Homework: Employee Tracker
+ [![npm version](https://badgen.net/npm/v/inquirer-emoji)](https://badge.fury.io/js/inquirer.svg)
 
-Developers are often tasked with creating interfaces that make it easy for non-developers to view and interact with information stored in databases. Often these interfaces are known as **C**ontent **M**anagement **S**ystems. In this homework assignment, your challenge is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
-
-## Instructions
-
-Design the following database schema containing three tables:
-
-![Database Schema](Assets/schema.png)
-
-* **department**:
-
-  * **id** - INT PRIMARY KEY
-  * **name** - VARCHAR(30) to hold department name
-
-* **role**:
-
-  * **id** - INT PRIMARY KEY
-  * **title** -  VARCHAR(30) to hold role title
-  * **salary** -  DECIMAL to hold role salary
-  * **department_id** -  INT to hold reference to department role belongs to
-
-* **employee**:
-
-  * **id** - INT PRIMARY KEY
-  * **first_name** - VARCHAR(30) to hold employee first name
-  * **last_name** - VARCHAR(30) to hold employee last name
-  * **role_id** - INT to hold reference to role employee has
-  * **manager_id** - INT to hold reference to another employee that manager of the current employee. This field may be null if the employee has no manager
+ # Licence
   
-Build a command-line application that at a minimum allows the user to:
+  >  
+     * select the license badge to view licence aggreements:
+
+     
+[![License](https://img.shields.io/badge/License-MIT-lime.svg)](https://opensource.org/licenses/MIT)
+
+
+
+  ### :octocat:
+  ### node js :package: 
+
+# Content Management System for Employees
+> CMS-for-Employees
+
+* Interfaces that make it easy for non-developers to view and interact with information stored in databases.
+* A solution for managing a company's employees using node, inquirer, and MySQL.
+* Schema created with three tables in the employees mysql database used to create as follows:
+
+<img src="./Assets/schema.PNG" width="500px" >
+
+
+# Table of Contents
+  <!-- toc -->
+  * [Description](#description)
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [Contributors](#contributors)
+  * [GitHub Information](#github-information)
+  * [Questions](#questions)
+  * [Credits](#credits)
+  * [Testing](#testing)
+   <!-- toc stop -->
+
+# Description
+
+> The application will prompt the user for 
+  information about the team employees, roles, departments  and then information about the team members as follows:
 
   * Add departments, roles, employees
 
   * View departments, roles, employees
 
   * Update employee roles
-
-Bonus points if you're able to:
 
   * Update employee managers
 
@@ -46,92 +54,59 @@ Bonus points if you're able to:
 
   * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
-We can frame this challenge as follows:
+# Installation
 
-```
-As a business owner
-I want to be able to view and manage the departments, roles, and employees in my company
-So that I can organize and plan my business
-```
+> Use node.js, with inquirer, mysql, console.table/console-table-printer installed through npm install in the terminal. In the terminal or Gitbash 'npm start' or 'node server.js' to run this application. The terminal will prompt users as to which views, updates, deletions, and additions to the company employee pool are required at the time of use.
 
-How do you deliver this? Here are some guidelines:
+# Usage
 
-* Use the [MySQL](https://www.npmjs.com/package/mysql) NPM package to connect to your MySQL database and perform queries.
+ **As a manager or business owner:**
+>   I want to generate information and interact with departments, roles, employees, and budget views, updates and deletions as well.
 
-* Use [InquirerJs](https://www.npmjs.com/package/inquirer/v/0.2.3) NPM package to interact with the user via the command-line.
+#### **User input**
 
-* Use [console.table](https://www.npmjs.com/package/console.table) to print MySQL rows to the console. There is a built-in version of `console.table`, but the NPM package formats the data a little better for our purposes.
+The project prompts the user use a fully functioning application that will allow for HR changes and views of tables of information about the employees of the company.
 
-* You may wish to have a separate file containing functions for performing specific SQL queries you'll need to use. Could a constructor function or a class be helpful for organizing these?
+# Mockup example:
 
-* You will need to perform a variety of SQL JOINS to complete this assignment, and it's recommended you review the week's activities if you need a refresher on this.
-
-![Employee Tracker](Assets/employee-tracker.gif)
-
-### Hints
-
-* You may wish to include a `seed.sql` file to pre-populate your database. This will make development of individual features much easier.
-
-* Focus on getting the basic functionality completed before working on more advanced features.
-
-* Review the week's activities for a refresher on MySQL.
-
-* Check out [SQL Bolt](https://sqlbolt.com/) for some extra MySQL help.
-
-## Minimum Requirements
-
-* Functional application.
-
-* GitHub repository with a unique name and a README describing the project.
-
-* The command-line application should allow users to:
-
-  * Add departments, roles, employees
-
-  * View departments, roles, employees
-
-  * Update employee roles
-
-## Bonus
-
-* The command-line application should allow users to:
-
-  * Update employee managers
-
-  * View employees by manager
-
-  * Delete departments, roles, and employees
-
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
-
-## Commit Early and Often
-
-One of the most important skills to master as a web developer is version control. Building the habit of committing via Git is important for two reasons:
-
-* Your commit history is a signal to employers that you are actively working on projects and learning new skills.
-
-* Your commit history allows you to revert your codebase in the event that you need to return to a previous state.
-
-Follow these guidelines for committing:
-
-* Make single-purpose commits for related changes to ensure a clean, manageable history. If you are fixing two issues, make two commits.
-
-* Write descriptive, meaningful commit messages so that you and anyone else looking at your repository can easily understand its history.
-
-* Don't commit half-done work, for the sake of your collaborators (and your future self!).
-
-* Test your application before you commit to ensure functionality at every step in the development process.
-
-We would like you to have well over 200 commits by graduation, so commit early and often!
+<img src="./Assets/employee-tracker.gif" width="500px" >
 
 
-## Submission on BCS
+# Contributors
 
-You are required to submit the following:
+#### askBCS Learning assistant @iarcones "big props!" :)
+#### @Carl Vega [TA] thanks for giving the code a second look for me!
 
-* The URL of the GitHub repository
+ ## **GitHub Information**
+ 
+  # '''' https://github.com/victorsc45 ''''
 
-* A video demonstrating the entirety of the app's functionality 
+  Picture of Developer: 
 
-- - -
-© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
+  <img src="https://avatars0.githubusercontent.com/victorsc45" width="200px" >
+  
+  ## *Questions*
+
+  > questions or comments contact me by email : 
+
+     
+  ####  victorlitzau+github@gmail.com
+
+
+ ### Credits
+
+#### https://npmjs.com/package/inquirer
+#### https://www.npmjs.com/search?q=console-table-printer
+#### https://www.npmjs.com/search?q=console.table
+#### https://www.techonthenet.com/mysql/functions/sum.php
+#### https://devhints.io/mysql
+#### https://www.npmjs.com/package/dotenv
+#### https://www.youtube.com/watch?v=WIeUFYX6tzw
+#### https://developer.mozilla.org/en-US/docs/Web/API/Console/table
+#### https://www.restapitutorial.com/lessons/whatisrest.html
+# Testing
+
+**testing I have provided a video that demos the application**
+### Video Demo Link
+
+https://drive.google.com/file/d/1SZD3ZbrWs5vKMtreP94dKbACVhJHuGoM/view
