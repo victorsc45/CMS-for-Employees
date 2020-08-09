@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/victorsc45/CMS-for-Employees#readme",
   "dependencies": {
+    "console-table-printer": "^2.3.4",
     "console.table": "^0.10.0",
     "inquirer": "^7.3.3",
     "inquirer-confirm": "^2.0.7",

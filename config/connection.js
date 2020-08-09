@@ -19,8 +19,8 @@ connection.connect(function (err) {
         console.error("error connecting: " + err.stack);
         return;
     }
-    console.log("connected as id " + connection.threadId);
-    startEmpCMS();
+    //console.log("connected as id " + connection.threadId);
+    // startEmpCMS();
 });
 
 // Export connection for our ORM to use.
