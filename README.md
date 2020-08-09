@@ -20,7 +20,7 @@
 * A solution for managing a company's employees using node, inquirer, and MySQL.
 * Schema created with three tables in the employees mysql database used to create as follows:
 
-<img src="./Assets/schema.PNG" width="500px" >
+  <img src="./Assets/schema.png" width="500px" >
 
 
 # Table of Contents
