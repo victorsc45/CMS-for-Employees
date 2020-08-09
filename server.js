@@ -70,7 +70,7 @@ function CMS() {
                     break;
                 case 'Remove Employee?':
                     employeesJSON();
-                    setTimeout(removeEmp, 500);
+                    setTimeout(deleteEmp, 500);
                     break;
                 case 'View Budget?':
                     viewBudget();
@@ -383,7 +383,7 @@ async function updateEmp() {
                                     });
                                 })
                         }
-                        // Update ROLE of choosen Employee
+                        // Update the role or employee
                         if (answers.updateOption === "UPDATE ROLE") {
                             inquirer.prompt({
                                 name: "updateRole",
@@ -401,7 +401,7 @@ async function updateEmp() {
                                     });
                                 })
                         }
-                        // Update MANAGER of choosen Employee
+                        // Update manager of employee
                         if (answers.updateOption === "UPDATE MANAGER") {
                             inquirer.prompt({
                                 name: "newManager",
@@ -427,3 +427,108 @@ async function updateEmp() {
 
         })
 }
+// Function to delete an employee
+async function deleteEmp() {
+    inquirer
+        .prompt([{
+            name: "empName",
+            type: "list",
+            message: "Choose the EMPLOYEE you want to REMOVE ? ",
+            choices: employeeFullName
+        }
+        ])
+        .then(function (answers) {
+            // Split the name to give in the where clause as in table its two different columns
+            var splitName = answers.empName.split(" ");
+            let query = `DELETE FROM employee WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.log(res.affectedRows + " record DELETED");
+                CMS();
+            });
+        })
+}
+async function viewBudget() {
+
+
+    let query = `SELECT department.name AS Department, SUM(role.salary) As Budget FROM role INNER JOIN department ON department.id = role.department_id GROUP BY department.name;`;
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        printTable(res);
+        CMS();
+    });
+
+}
+
+// Function to create a JSON array of all ROLES
+async function rolesJSON() {
+    connection.query("SELECT id, title FROM role;", function (err, res) {
+        res.forEach(function (row) {
+            rolesArray.push({ id: row.id, title: row.title });
+            employeeRolesNames.push(row.title);
+        })
+        if (err) throw err;
+    });
+}
+
+// Function to create a JSON array of all EMPLOYEES
+async function employeesJSON() {
+    employeeFullName.push("NONE");
+
+    connection.query("SELECT id, first_name, last_name FROM employee;", function (err, res) {
+        res.forEach(function (row) {
+            employeesArray.push({ id: row.id, first_name: row.first_name, last_name: row.last_name });
+            employeeFullName.push(row.first_name + " " + row.last_name);
+        })
+        if (err) throw err;
+    });
+}
+
+// Function to create a JSON array of all DEPARTMENTS
+async function departmentsJSON() {
+    connection.query("SELECT id, name FROM department;", function (err, res) {
+        res.forEach(function (row) {
+            roleDepartment.push(row.name);
+            departmentsArray.push({ id: row.id, name: row.name });
+        })
+        if (err) throw err;
+    });
+}
+
+// create arrays to hold the Role id, manager id and dept id from selected names
+function getRoleID(employeeRole, array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].title === employeeRole) {
+            return array[i].id;
+        }
+    }
+}
+
+// Function to get MANAGER ID from choosen NAMES
+function getManagerID(managerName, array) {
+    if (managerName === "NONE") {
+        return array.id = null;
+    }
+    else {
+        var splitName = managerName.split(" ");
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].first_name === splitName[0]) {
+                return array[i].id;
+            }
+        }
+    }
+
+}
+
+// Function to get DEPARTMENT ID from choosen NAMES
+function getDeptID(departmentName, array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].name === departmentName) {
+            return array[i].id;
+        }
+    }
+}
+
+
+
+module.exports = CMS;
