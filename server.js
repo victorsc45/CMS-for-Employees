@@ -59,6 +59,7 @@ function CMS() {
                     break;
                 case 'Add Role?':
                     addRole();
+                    departmentsJSON();
                     break;
                 case 'Update Employee Information?':
                     employeesJSON();
@@ -261,7 +262,7 @@ async function addRole() {
         .prompt([{
             name: "title",
             type: "input",
-            message: "What is the ROLE NAME you want to add ? ",
+            message: "What is the ROLE NAME you want to add? ",
             validate: function (value) {
                 var string = value.match(/^\s*\S+.*/);
                 if (string) {
@@ -274,7 +275,7 @@ async function addRole() {
         {
             name: "salary",
             type: "input",
-            message: "What is the SALARY for the new role ? ",
+            message: "What is the compensation for the role? ",
             validate: function (value) {
                 var valid = !isNaN(parseFloat(value));
                 return valid || "Please enter the SALARY ";
@@ -283,8 +284,8 @@ async function addRole() {
         {
             name: "department",
             type: "list",
-            message: "What is the Department for the role ? ",
-            choices: roleDepartment
+            message: "What is the Department is the employee in? ",
+            choices: roleDepartment,
         }])
         .then(function (answers) {
 
