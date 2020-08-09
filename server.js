@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 const connection = require("./config/connection.js");
 const { printTable } = require('console-table-printer');
-
+const dotenv = require("dotenv").config();
 //arrays
 
 let employeeRolesNames = [];
