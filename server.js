@@ -90,7 +90,7 @@ r.title AS "ROLE", d.name AS "DEPARTMENT", r.salary AS "SALARY",
 FROM employee e 
 LEFT JOIN role r ON e.role_id=r.id
 LEFT JOIN department d ON r.department_id = d.id;`;
-    connection.query(query, function (err, res) {
+    connection.query(query, (err, res) => {
         if (err) throw err;
         printTable(res);
         CMS();
@@ -109,7 +109,7 @@ function viewEmpWMngr() {
             let mngrId = getManagerID(answers.managerName, employeesArray);
 
             let query = `SELECT id AS ID, first_name as 'FIRST NAME', last_name as 'LAST NAME' FROM employee WHERE manager_id=${mngrId};`;
-            connection.query(query, function (err, res) {
+            connection.query(query, (err, res) => {
                 if (err) throw err;
                 if (res.length === 0) {
                     console.log("No Employees under that manager.");
@@ -135,7 +135,7 @@ function viewEmpWRole() {
             let roleId = getRoleID(answers.roleTitle, rolesArray);
 
             let query = `SELECT id AS ID, first_name as 'FIRST NAME', last_name as 'LAST NAME' FROM employee WHERE role_id=${roleId};`;
-            connection.query(query, function (err, res) {
+            connection.query(query, (err, res) => {
                 if (err) throw err;
                 if (res.length === 0) {
                     console.log("No Employees working under this ROLE !!!");
@@ -150,7 +150,7 @@ function viewEmpWRole() {
 // Function to view departments and id
 function viewDepts() {
     let query = `SELECT id as ID, name as "DEPARTMENT NAME" FROM department;`;
-    connection.query(query, function (err, res) {
+    connection.query(query, (err, res) => {
         if (err) throw err;
         printTable(res);
         CMS();
@@ -159,7 +159,7 @@ function viewDepts() {
 // Function view all the roles and Ids
 function viewRoles() {
     let query = "SELECT id AS ID, title as ROLE, salary as SALARY FROM role;";
-    connection.query(query, function (err, res) {
+    connection.query(query, (err, res) => {
         if (err) throw err;
         printTable(res);
         CMS();
@@ -208,22 +208,21 @@ async function addEmp() {
             choices: employeeFullName,
         }])
         .then(async function (answers) {
-            // get id's to insert into the database from the options
-            // Option choosen is STRING ... table accepts only INT
+            //ids to arrays for inserting correct role and manager when adding employee
             let roleId = getRoleID(answers.role, rolesArray);
             let mngrId = getManagerID(answers.manager, employeesArray);
 
-            // Function to insert into the database after getting ids from above
-            function insertEmployee(answers, roleId, mngrId) {
+            // Function insert into DB name role and manager of employee
+            function addNewEmp(answers, roleId, mngrId) {
                 let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES('${answers.first_name}','${answers.last_name}',${roleId},${mngrId});`
-                connection.query(query, function (err, res) {
+                connection.query(query, (err, res) => {
                     if (err) throw err;
-                    console.log(res.affectedRows + " record INSERTED");
+                    console.log(res.affectedRows + " new employee added...");
                     CMS();
                 });
             }
 
-            insertEmployee(answers, roleId, mngrId);
+            addNewEmp(answers, roleId, mngrId);
 
         })
 
@@ -235,22 +234,22 @@ async function addDept() {
         .prompt({
             name: "newDept",
             type: "input",
-            message: "What is the DEPARTMENT NAME you want to add ? ",
+            message: "What is the name of the Department you would like to add? ",
             validate: function (value) {
                 var string = value.match(/^\s*\S+.*/);
                 if (string) {
                     return true;
                 } else {
-                    return "Please enter the new DEPARTMENT's Name";
+                    return "Something went wrong backspace and add new department";
                 }
             }
         }
         )
         .then(function (answers) {
             let query = `INSERT INTO department (name) VALUES('${answers.newDept}');`
-            connection.query(query, function (err, res) {
+            connection.query(query, (err, res) => {
                 if (err) throw err;
-                console.log(res.affectedRows + " record INSERTED");
+                console.log(res.affectedRows + " New Department added");
                 CMS();
             });
 
@@ -262,13 +261,13 @@ async function addRole() {
         .prompt([{
             name: "title",
             type: "input",
-            message: "What is the ROLE NAME you want to add? ",
+            message: "Enter the name of the new Role you would like to add? ",
             validate: function (value) {
                 var string = value.match(/^\s*\S+.*/);
                 if (string) {
                     return true;
                 } else {
-                    return "Please enter the new ROLE Name";
+                    return "something went wrong backspace and add new Role please";
                 }
             }
         },
@@ -284,7 +283,7 @@ async function addRole() {
         {
             name: "department",
             type: "list",
-            message: "What is the Department is the employee in? ",
+            message: "Select the Department the employee is in? ",
             choices: roleDepartment,
         }])
         .then(function (answers) {
@@ -292,9 +291,9 @@ async function addRole() {
             let depId = getDeptID(answers.department, departmentsArray);
             var query = `INSERT INTO role(title, salary, department_id) VALUES(?,?,${depId})`;
 
-            connection.query(query, [answers.title, answers.salary], function (err, res) {
+            connection.query(query, [answers.title, answers.salary], (err, res) => {
                 if (err) throw err;
-                console.log(res.affectedRows + " Record INSERTED");
+                console.log(res.affectedRows + " Role has been added");
 
                 CMS();
             });
@@ -306,7 +305,7 @@ async function updateEmp() {
         .prompt([{
             name: "empFullName",
             type: "list",
-            message: "Choose the EMPLOYEE you want to UPDATE ? ",
+            message: "Select the name of the employee to Update? ",
             choices: employeeFullName,
         }
         ])
@@ -327,14 +326,14 @@ async function updateEmp() {
                     {
                         name: "updateOption",
                         type: "list",
-                        message: "What do you want to UPDATE for the employee ? ",
-                        choices: ['UPDATE FIRST NAME', 'UPDATE LAST NAME', 'UPDATE ROLE', 'UPDATE MANAGER'],
+                        message: "Select what you want to update for the employee? ",
+                        choices: ['Update First Name', 'Update Last Name', 'Update Employee Role', 'Update Employee Manager'],
                     }
                 ])
 
                     .then(function (answers) {
-                        // Update FIRST NAME of choosen Employee
-                        if (answers.updateOption === "UPDATE FIRST NAME") {
+                        // Update First Name of choosen Employee
+                        if (answers.updateOption === "Update First Name") {
                             inquirer.prompt({
                                 name: "newFirstName",
                                 message: `What is the NEW FIRST name for employee ? `,
@@ -350,15 +349,15 @@ async function updateEmp() {
                             })
                                 .then(function (answerfirst) {
                                     let query = `UPDATE employee SET first_name='${answerfirst.newFirstName}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
-                                    connection.query(query, function (err, res) {
+                                    connection.query(query, (err, res) => {
                                         if (err) throw err;
-                                        console.log(res.affectedRows + " record UPDATED");
+                                        console.log(res.affectedRows + " first name updated");
                                         CMS();
                                     });
                                 })
                         }
-                        // Update LAST NAME of choosen Employee
-                        if (answers.updateOption === "UPDATE LAST NAME") {
+                        // Update Last Name of choosen Employee
+                        if (answers.updateOption === "Update Last Name") {
                             inquirer.prompt({
                                 name: "newLastName",
                                 message: `What is the NEW LAST name for employee ? `,
@@ -374,15 +373,15 @@ async function updateEmp() {
                             })
                                 .then(function (answersLast) {
                                     let query = `UPDATE employee SET last_name='${answersLast.newLastName}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
-                                    connection.query(query, function (err, res) {
+                                    connection.query(query, (err, res) => {
                                         if (err) throw err;
-                                        console.log(res.affectedRows + " record UPDATED");
+                                        console.log(res.affectedRows + " last name updated");
                                         cli();
                                     });
                                 })
                         }
                         // Update the role or employee
-                        if (answers.updateOption === "UPDATE ROLE") {
+                        if (answers.updateOption === "Update Employee Role") {
                             inquirer.prompt({
                                 name: "updateRole",
                                 message: `Choose the NEW ROLE for employee ? `,
@@ -392,27 +391,27 @@ async function updateEmp() {
                                 .then(function (newRole) {
                                     let roleId = getRoleID(newRole.updateRole, rolesArray);
                                     let query = `UPDATE employee SET role_id='${roleId}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
-                                    connection.query(query, function (err, res) {
+                                    connection.query(query, (err, res) => {
                                         if (err) throw err;
-                                        console.log(res.affectedRows + " record UPDATED");
+                                        console.log(res.affectedRows + " employee role updated");
                                         CMS();
                                     });
                                 })
                         }
-                        // Update manager of employee
-                        if (answers.updateOption === "UPDATE MANAGER") {
+                        // Update Employee Manager of employee
+                        if (answers.updateOption === "Update Employee Manager") {
                             inquirer.prompt({
                                 name: "newManager",
-                                message: `Choose the NEW MANAGER for employee ? `,
+                                message: `Select the new Manager? `,
                                 type: "list",
                                 choices: employeeFullName
                             })
                                 .then(function (answers2) {
                                     let mngrId = getManagerID(answers2.newManager, employeesArray);
                                     let query = `UPDATE employee SET manager_id='${mngrId}' WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
-                                    connection.query(query, function (err, res) {
+                                    connection.query(query, (err, res) => {
                                         if (err) throw err;
-                                        console.log(res.affectedRows + " record UPDATED");
+                                        console.log(res.affectedRows + " employee's manager updated");
                                         CMS();
                                     });
                                 })
@@ -431,7 +430,7 @@ async function deleteEmp() {
         .prompt([{
             name: "empName",
             type: "list",
-            message: "Choose the EMPLOYEE you want to REMOVE ? ",
+            message: "Select the Employee to Offboard? ",
             choices: employeeFullName
         }
         ])
@@ -439,18 +438,17 @@ async function deleteEmp() {
             // Split the name to give in the where clause as in table its two different columns
             var splitName = answers.empName.split(" ");
             let query = `DELETE FROM employee WHERE first_name='${splitName[0]}' and last_name='${splitName[1]}';`
-            connection.query(query, function (err, res) {
+            connection.query(query, (err, res) => {
                 if (err) throw err;
-                console.log(res.affectedRows + " record DELETED");
+                console.log(res.affectedRows + " Employee Offboarded");
                 CMS();
             });
         })
 }
+//view budgets by department name and total budget per department
 async function viewBudget() {
-
-
     let query = `SELECT department.name AS Department, SUM(role.salary) As Budget FROM role INNER JOIN department ON department.id = role.department_id GROUP BY department.name;`;
-    connection.query(query, function (err, res) {
+    connection.query(query, (err, res) => {
         if (err) throw err;
         printTable(res);
         CMS();
@@ -458,9 +456,9 @@ async function viewBudget() {
 
 }
 
-// Function to create a JSON array of all ROLES
+// json array of roles
 async function rolesJSON() {
-    connection.query("SELECT id, title FROM role;", function (err, res) {
+    connection.query("SELECT id, title FROM role;", (err, res) => {
         res.forEach(function (row) {
             rolesArray.push({ id: row.id, title: row.title });
             employeeRolesNames.push(row.title);
@@ -469,11 +467,11 @@ async function rolesJSON() {
     });
 }
 
-// Function to create a JSON array of all EMPLOYEES
+// json array of employees
 async function employeesJSON() {
     employeeFullName.push("NONE");
 
-    connection.query("SELECT id, first_name, last_name FROM employee;", function (err, res) {
+    connection.query("SELECT id, first_name, last_name FROM employee;", (err, res) => {
         res.forEach(function (row) {
             employeesArray.push({ id: row.id, first_name: row.first_name, last_name: row.last_name });
             employeeFullName.push(row.first_name + " " + row.last_name);
@@ -482,9 +480,9 @@ async function employeesJSON() {
     });
 }
 
-// Function to create a JSON array of all DEPARTMENTS
+// json array of departments
 async function departmentsJSON() {
-    connection.query("SELECT id, name FROM department;", function (err, res) {
+    connection.query("SELECT id, name FROM department;", (err, res) => {
         res.forEach(function (row) {
             roleDepartment.push(row.name);
             departmentsArray.push({ id: row.id, name: row.name });
@@ -502,7 +500,7 @@ function getRoleID(employeeRole, array) {
     }
 }
 
-// Function to get MANAGER ID from choosen NAMES
+// manager ids array
 function getManagerID(managerName, array) {
     if (managerName === "NONE") {
         return array.id = null;
@@ -518,7 +516,7 @@ function getManagerID(managerName, array) {
 
 }
 
-// Function to get DEPARTMENT ID from choosen NAMES
+// department ids array
 function getDeptID(departmentName, array) {
     for (var i = 0; i < array.length; i++) {
         if (array[i].name === departmentName) {
